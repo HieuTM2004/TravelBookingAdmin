@@ -30,6 +30,7 @@ export interface RoomCreateDto {
   categoryId: string;
   available: boolean;
   rating: number;
+  price: number;
 }
 
 export interface RoomUpdateDto {
@@ -41,4 +42,5 @@ export interface RoomUpdateDto {
   categoryId: string;
   available: boolean;
   rating: number;
+  price: number;
 }

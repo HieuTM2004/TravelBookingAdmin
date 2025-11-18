@@ -5,7 +5,6 @@ import {
   createAccomType,
   updateAccomType,
   deleteAccomType,
-  getAccomTypeById,
 } from "../../api/accomtypeAPI";
 import type {
   AccomTypeCreateDto,

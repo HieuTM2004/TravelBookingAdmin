@@ -16,6 +16,12 @@ import RoomCategories from "./pages/RoomManagement/RoomCategories";
 import Rooms from "./pages/RoomManagement/Rooms";
 import RoomDetail from "./pages/RoomManagement/RoomDetail";
 import BedTypes from "./pages/bedTypes/BedTypes";
+import Facilities from "./pages/Facilities/Facilities";
+import Images from "./pages/Images/Images";
+import CancelPolicies from "./pages/CancelPolicies/CancelPolicies";
+import PaymentMethods from "./pages/Payment/PaymentMethods";
+import PaymentRecords from "./pages/Payment/PaymentRecords";
+import Reviews from "./pages/Reviews/Reviews";
 
 export default function App() {
   return (
@@ -40,6 +46,16 @@ export default function App() {
             <Route path="/rooms/:id" element={<RoomDetail />} />
 
             <Route path="/bedtypes" element={<BedTypes />} />
+
+            <Route path="/facilities" element={<Facilities />} />
+            <Route path="/images" element={<Images />} />
+
+            <Route path="/cancelpolicies" element={<CancelPolicies />} />
+
+            <Route path="/paymentmethods" element={<PaymentMethods />} />
+            <Route path="/paymentrecords" element={<PaymentRecords />} />
+
+            <Route path="/reviews" element={<Reviews />} />
 
             <Route path="/users" element={<User />} />
             <Route path="/content-moderation" element={<ContentModeration />} />

@@ -140,7 +140,14 @@ export interface Policy {
 }
 
 export interface Review {
-  // Define if needed, empty for now
+  id: string;
+  rating: number;
+  review: string;
+  createdAt: string;
+  createdBy?: string | null;
+  userId: string;
+  userName?: string | null;
+  accomId?: string | null;
 }
 
 export interface GeneralInfoUpdateDto {

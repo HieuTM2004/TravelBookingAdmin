@@ -1,5 +1,7 @@
-import React from "react";
+// AccommodationTable.tsx - Complete with dynamic type name fetch
+import React, { useState, useEffect } from "react";
 import { AccommodationSummary } from "../../types/accommodation.types";
+import { getTypeNameById } from "../../utils/accomTypeUtils"; // Utility for dynamic name
 
 interface AccommodationTableProps {
   accommodations: AccommodationSummary[];
@@ -16,6 +18,26 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const [typeNames, setTypeNames] = useState<Record<string, string>>({}); // Cache type names
+
+  // Load type names on mount for all accoms
+  useEffect(() => {
+    const loadAllTypeNames = async () => {
+      for (const accom of accommodations) {
+        if (accom.accomTypeName || typeNames[accom.accomTypeId]) continue; // Skip if already loaded
+        try {
+          const name = await getTypeNameById(accom.accomTypeId);
+          setTypeNames((prev) => ({ ...prev, [accom.accomTypeId]: name }));
+        } catch (error) {
+          console.error(`Error loading type for ${accom.accomTypeId}:`, error);
+          setTypeNames((prev) => ({ ...prev, [accom.accomTypeId]: "N/A" }));
+        }
+      }
+    };
+
+    loadAllTypeNames();
+  }, [accommodations, typeNames]); // Re-run if accoms change
+
   if (loading) {
     return <p className="text-gray-900 dark:text-white">Loading...</p>;
   }
@@ -26,13 +48,10 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
         <thead>
           <tr className="bg-gray-100 dark:bg-gray-800">
             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
-              ID
-            </th>
-            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Name
             </th>
             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
-              Type ID
+              Type
             </th>
             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Star
@@ -58,13 +77,12 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
               className="hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
-                {accom.id}
-              </td>
-              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {accom.name}
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
-                {accom.accomTypeId}
+                {typeNames[accom.accomTypeId] ||
+                  accom.accomTypeName ||
+                  "Loading..."}
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {accom.star}
@@ -76,7 +94,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                 {accom.location}
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
-                ${accom.price}
+                ${accom.price.toLocaleString()}
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 <button

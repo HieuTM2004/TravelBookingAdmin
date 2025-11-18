@@ -29,9 +29,6 @@ const AccomTypeTable: React.FC<AccomTypeTableProps> = ({
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              ID
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               Type
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -51,9 +48,6 @@ const AccomTypeTable: React.FC<AccomTypeTableProps> = ({
               key={accomType.id}
               className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                {accomType.id.substring(0, 8)}... {/* Truncate long ID */}
-              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                 {accomType.type}
               </td>

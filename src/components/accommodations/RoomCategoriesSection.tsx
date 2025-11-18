@@ -1,14 +1,20 @@
 // RoomCategoriesSection.tsx
 import React, { useState } from "react";
 import type { RoomCategory } from "../../types/accommodation.types";
-import FacilitiesSection from "./FacilitiesSection"; // Reuse for room facilities
-import ImagesGallery from "./ImagesGallery"; // Reuse for room images
+import RoomCategoryImagesGallery from "../roomManage/roomCategories/RoomCategoryImagesGallery";
+import RoomCategoryFacilitiesSection from "../roomManage/roomCategories/RoomCategoryFacilitiesSection";
 
 interface Props {
   roomCategories: RoomCategory[];
+  onOpenAssign: (type: "image" | "facility", categoryId: string) => void; // Pass from parent for add
+  onRefresh: () => void;
 }
 
-const RoomCategoriesSection: React.FC<Props> = ({ roomCategories }) => {
+const RoomCategoriesSection: React.FC<Props> = ({
+  roomCategories,
+  onOpenAssign,
+  onRefresh,
+}) => {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const toggleCategory = (id: string) => {
@@ -37,10 +43,20 @@ const RoomCategoriesSection: React.FC<Props> = ({ roomCategories }) => {
               <div className="p-4 bg-white dark:bg-gray-800">
                 <p className="mb-4">{category.about}</p>
                 {category.images.length > 0 && (
-                  <ImagesGallery images={category.images} />
+                  <RoomCategoryImagesGallery
+                    images={category.images}
+                    onAdd={() => onOpenAssign("image", category.id)} // Pass category.id for add
+                    categoryId={category.id}
+                    onRefresh={onRefresh}
+                  />
                 )}
                 {category.facilities.length > 0 && (
-                  <FacilitiesSection facilities={category.facilities} />
+                  <RoomCategoryFacilitiesSection
+                    facilities={category.facilities}
+                    onAdd={() => onOpenAssign("facility", category.id)} // Pass category.id for add
+                    categoryId={category.id} // For DELETE (room category)
+                    onRefresh={onRefresh}
+                  />
                 )}
                 <div className="mt-4">
                   <h3 className="font-semibold mb-2">Rooms</h3>

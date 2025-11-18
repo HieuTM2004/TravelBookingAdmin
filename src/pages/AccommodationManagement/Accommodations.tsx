@@ -79,6 +79,7 @@ const Accommodations: React.FC = () => {
     e.preventDefault();
     try {
       if (editingId) {
+        console.log("Updating accommodation:", editingId, formData);
         await updateAccommodation(editingId, formData);
       } else {
         const createData = { ...formData, price: 0 }; // Add price for create if required

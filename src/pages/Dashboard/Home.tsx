@@ -4,6 +4,7 @@ import MonthlySalesChart from "../../components/ecommerce/MonthlySalesChart";
 import StatisticsChart from "../../components/ecommerce/StatisticsChart";
 import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
 import RecentOrders from "../../components/ecommerce/RecentOrders";
+import DailyReviewsChart from "../../components/ecommerce/DailyReviewsChart";
 
 export default function Home() {
   return (
@@ -21,6 +22,10 @@ export default function Home() {
 
         <div className="col-span-12 xl:col-span-5">
           <MonthlyTarget />
+        </div>
+
+        <div className="col-span-12 xl:col-span-5">
+          <DailyReviewsChart />
         </div>
 
         <div className="col-span-12">

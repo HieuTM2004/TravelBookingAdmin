@@ -1,27 +1,41 @@
-// FacilitiesSection.tsx
+// AccommodationFacilitiesSection.tsx - Specific for Accommodation
 import React from "react";
 import type { Facility } from "../../types/accommodation.types";
+import { removeFacility } from "../../api/accommodationAPI"; // Accommodation-specific
 
 interface Props {
   facilities: Facility[];
   onAdd: () => void;
-  onRemove: (id: string) => void;
+  accomId: string;
+  onRefresh: () => void;
 }
 
-const FacilitiesSection: React.FC<Props> = ({
+const AccommodationFacilitiesSection: React.FC<Props> = ({
   facilities,
   onAdd,
-  onRemove,
+  accomId,
+  onRefresh,
 }) => {
+  const handleRemove = async (facilityId: string) => {
+    if (window.confirm("Are you sure you want to remove this facility?")) {
+      try {
+        await removeFacility(accomId, facilityId); // Accommodation API
+        onRefresh();
+      } catch (error) {
+        console.error("Error removing facility:", error);
+      }
+    }
+  };
+
   return (
     <section className="mb-8 p-6 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 relative">
       <div className="flex justify-between items-start mb-4">
         <h2 className="text-2xl font-semibold">Facilities</h2>
         <button
           onClick={onAdd}
-          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm"
+          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition-colors"
         >
-          Add Facility
+          Add
         </button>
       </div>
       {facilities.length === 0 ? (
@@ -40,7 +54,7 @@ const FacilitiesSection: React.FC<Props> = ({
                 <p className="text-sm">{facility.name}</p>
               </div>
               <button
-                onClick={() => onRemove(facility.id)}
+                onClick={() => handleRemove(facility.id)}
                 className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
               >
                 Remove
@@ -53,7 +67,7 @@ const FacilitiesSection: React.FC<Props> = ({
   );
 };
 
-// Simple icon mapper (use real icons like Heroicons or FontAwesome in production)
+// Simple icon mapper (unchanged)
 const getIcon = (iconName: string) => {
   const icons: { [key: string]: string } = {
     wifi: "📶",
@@ -65,4 +79,4 @@ const getIcon = (iconName: string) => {
   return icons[iconName] || "⚙️";
 };
 
-export default FacilitiesSection;
+export default AccommodationFacilitiesSection;

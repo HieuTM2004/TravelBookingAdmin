@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { RoomCreateDto } from "../../../types/room.types";
 import { RoomCategoryDto } from "../../../types/roomcategory.types";
+import { BedTypeDto } from "../../../types/bedtype.types";
+import { CancelPolicyDto } from "../../../types/cancelpolicy.types";
 
 interface RoomModalProps {
   show: boolean;
@@ -11,6 +13,9 @@ interface RoomModalProps {
   onSubmit: (e: React.FormEvent) => void;
   onFormDataChange: (data: RoomCreateDto) => void;
   categories: RoomCategoryDto[];
+  bedTypes: BedTypeDto[];
+  cancelPolicies: CancelPolicyDto[];
+  selectedCategoryName: string;
 }
 
 const RoomModal: React.FC<RoomModalProps> = ({
@@ -20,7 +25,9 @@ const RoomModal: React.FC<RoomModalProps> = ({
   onClose,
   onSubmit,
   onFormDataChange,
-  categories,
+  bedTypes,
+  cancelPolicies,
+  selectedCategoryName,
 }) => {
   const [tempRating, setTempRating] = useState(formData.rating);
 
@@ -34,7 +41,7 @@ const RoomModal: React.FC<RoomModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100000]">
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg max-w-md w-full shadow-2xl">
         <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
           {editingId ? "Edit Room" : "Add New Room"}
@@ -54,6 +61,20 @@ const RoomModal: React.FC<RoomModalProps> = ({
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Category
+            </label>
+            <p className="text-sm font-medium text-gray-900 dark:text-white px-3 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md">
+              {selectedCategoryName || "No category selected"}
+            </p>
+            <input
+              type="hidden"
+              value={formData.categoryId}
+              // Pre-filled from parent, no change
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -70,6 +91,24 @@ const RoomModal: React.FC<RoomModalProps> = ({
                 required
               />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Price ($)
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.price}
+                onChange={(e) =>
+                  handleChange("price", parseFloat(e.target.value) || 0)
+                }
+                className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Rating (0-10)
@@ -120,18 +159,18 @@ const RoomModal: React.FC<RoomModalProps> = ({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Category
+              Bed Type
             </label>
             <select
-              value={formData.categoryId}
-              onChange={(e) => handleChange("categoryId", e.target.value)}
+              value={formData.bedTypeId}
+              onChange={(e) => handleChange("bedTypeId", e.target.value)}
               className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
+              <option value="">Select Bed Type</option>
+              {bedTypes.map((bedType) => (
+                <option key={bedType.id} value={bedType.id}>
+                  {bedType.type}
                 </option>
               ))}
             </select>
@@ -139,30 +178,21 @@ const RoomModal: React.FC<RoomModalProps> = ({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Bed Type ID
-            </label>
-            <input
-              type="text"
-              placeholder="e.g., eeeeeeee-eeee-eeee-eeee-eeeeeeeeee05"
-              value={formData.bedTypeId}
-              onChange={(e) => handleChange("bedTypeId", e.target.value)}
-              className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Cancel Policy ID
             </label>
-            <input
-              type="text"
-              placeholder="e.g., f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"
+            <select
               value={formData.cancelPolicyId}
               onChange={(e) => handleChange("cancelPolicyId", e.target.value)}
               className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
+            >
+              <option value="">Select Cancel Policy</option>
+              {cancelPolicies.map((policy) => (
+                <option key={policy.id} value={policy.id}>
+                  {policy.type}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">

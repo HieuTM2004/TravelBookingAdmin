@@ -7,6 +7,8 @@ import {
   updateRoomCategory,
   deleteRoomCategory,
   getRoomCategoryById,
+  assignImageToRoomCategory, // New import
+  assignFacilityToRoomCategory,
 } from "../../api/roomcategoryAPI";
 import type {
   RoomCategoryCreateDto,
@@ -25,6 +27,9 @@ const RoomCategories: React.FC = () => {
   );
   const [selectedAccomId, setSelectedAccomId] = useState<string>(""); // Filter by accom
   const [selectedAccomName, setSelectedAccomName] = useState<string>("");
+  const [currentCategoryId, setCurrentCategoryId] = useState<string | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -88,6 +93,7 @@ const RoomCategories: React.FC = () => {
   // Handle create/update
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form data before POST:", formData);
     try {
       if (editingId) {
         await updateRoomCategory(editingId, formData as RoomCategoryUpdateDto);
@@ -141,10 +147,49 @@ const RoomCategories: React.FC = () => {
     }
   };
 
+  const openCreateModal = () => {
+    if (!selectedAccomId) {
+      alert("Please select an accommodation first.");
+      return;
+    }
+    setFormData({
+      name: "",
+      basicFacilities: [],
+      roomFacilities: [],
+      bathAmenities: [],
+      about: "",
+      accomId: selectedAccomId, // Pre-fill with selected
+    });
+    setEditingId(null);
+    setShowCreateModal(true);
+  };
+
   // Open assign modal
-  const handleOpenAssign = (type: "image" | "facility") => {
+  const handleOpenAssign = (type: "image" | "facility", categoryId: string) => {
     setAssignType(type);
+    setCurrentCategoryId(categoryId);
     setShowAssignModal(true);
+  };
+
+  const handleAssign = async (
+    type: "image" | "facility",
+    resourceId: string
+  ) => {
+    if (!currentCategoryId || !resourceId) return;
+
+    try {
+      if (type === "image") {
+        await assignImageToRoomCategory(currentCategoryId, resourceId);
+      } else {
+        await assignFacilityToRoomCategory(currentCategoryId, resourceId);
+      }
+      fetchRoomCategories(selectedAccomId); // Refresh list
+      setShowAssignModal(false);
+      setCurrentCategoryId(null);
+    } catch (error) {
+      console.error(`Error assigning ${type}:`, error);
+      // Optional: Show toast/alert
+    }
   };
 
   return (
@@ -153,7 +198,7 @@ const RoomCategories: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Room Categories</h1>
         <button
-          onClick={() => setShowCreateModal(true)}
+          onClick={openCreateModal}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow-md transition-all hover:shadow-lg"
           disabled={!selectedAccomId}
         >
@@ -226,12 +271,11 @@ const RoomCategories: React.FC = () => {
       <RoomCategoryAssignModal
         show={showAssignModal}
         type={assignType}
-        onClose={() => setShowAssignModal(false)}
-        onAssign={(id) => {
-          // Handle assign based on type (image or facility)
-          console.log(`Assign ${assignType}: ${id}`); // Replace with actual logic
+        onClose={() => {
           setShowAssignModal(false);
+          setCurrentCategoryId(null);
         }}
+        onAssign={(id) => handleAssign(assignType, id)} // Pass handler with type/id
       />
     </div>
   );

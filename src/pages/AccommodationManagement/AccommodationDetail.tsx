@@ -13,10 +13,6 @@ import {
   deleteGeneralInfo,
   updatePolicy,
   deletePolicy,
-  assignImage,
-  removeImage,
-  assignFacility,
-  removeFacility,
 } from "../../api/accommodationAPI";
 import type {
   AccomDetailDto,
@@ -42,6 +38,10 @@ const AccommodationDetail: React.FC = () => {
   const [showAddImageModal, setShowAddImageModal] = useState(false);
   const [showAddFacilityModal, setShowAddFacilityModal] = useState(false);
 
+  const [showAddImageToCategory, setShowAddImageToCategory] = useState(false);
+  const [showAddFacilityToCategory, setShowAddFacilityToCategory] =
+    useState(false);
+  const [currentCategoryId, setCurrentCategoryId] = useState<string>("");
   useEffect(() => {
     if (id) {
       fetchDetail(id);
@@ -117,53 +117,9 @@ const AccommodationDetail: React.FC = () => {
 
   // Handlers for Images
   const handleAddImage = () => setShowAddImageModal(true);
-  const handleRemoveImage = async (imageId: string) => {
-    if (window.confirm("Remove this image?")) {
-      try {
-        await removeImage(id!, imageId);
-        refreshDetail();
-      } catch (err) {
-        console.log(err);
-        console.error("Error removing image");
-      }
-    }
-  };
-
-  const handleAssignImage = async (imageId: string) => {
-    try {
-      await assignImage(id!, imageId);
-      refreshDetail();
-      setShowAddImageModal(false);
-    } catch (err) {
-      console.log(err);
-      console.error("Error assigning image");
-    }
-  };
 
   // Handlers for Facilities
   const handleAddFacility = () => setShowAddFacilityModal(true);
-  const handleRemoveFacility = async (facilityId: string) => {
-    if (window.confirm("Remove this facility?")) {
-      try {
-        await removeFacility(id!, facilityId);
-        refreshDetail();
-      } catch (err) {
-        console.log(err);
-        console.error("Error removing facility");
-      }
-    }
-  };
-
-  const handleAssignFacility = async (facilityId: string) => {
-    try {
-      await assignFacility(id!, facilityId);
-      refreshDetail();
-      setShowAddFacilityModal(false);
-    } catch (err) {
-      console.log(err);
-      console.error("Error assigning facility");
-    }
-  };
 
   if (loading) {
     return (
@@ -188,6 +144,15 @@ const AccommodationDetail: React.FC = () => {
       </div>
     );
   }
+
+  const onOpenAssign = (type: "image" | "facility", categoryId: string) => {
+    setCurrentCategoryId(categoryId);
+    if (type === "image") {
+      setShowAddImageToCategory(true);
+    } else {
+      setShowAddFacilityToCategory(true);
+    }
+  };
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
@@ -233,14 +198,20 @@ const AccommodationDetail: React.FC = () => {
       <FacilitiesSection
         facilities={detail.facilities || []}
         onAdd={handleAddFacility}
-        onRemove={handleRemoveFacility}
+        accomId={id!}
+        onRefresh={refreshDetail}
       />
       <ImagesGallery
         images={detail.images || []}
         onAdd={handleAddImage}
-        onRemove={handleRemoveImage}
+        accomId={id!}
+        onRefresh={refreshDetail}
       />
-      <RoomCategoriesSection roomCategories={detail.roomCategories || []} />
+      <RoomCategoriesSection
+        roomCategories={detail.roomCategories || []}
+        onOpenAssign={onOpenAssign}
+        onRefresh={refreshDetail}
+      />
       <ReviewsSection reviews={detail.reviews || []} />
 
       {/* Modals */}
@@ -258,13 +229,15 @@ const AccommodationDetail: React.FC = () => {
       />
       <AddImageModal
         show={showAddImageModal}
+        accomId={id!}
         onClose={() => setShowAddImageModal(false)}
-        onAssign={handleAssignImage}
+        onRefresh={refreshDetail}
       />
       <AddFacilityModal
         show={showAddFacilityModal}
+        accomId={id!}
         onClose={() => setShowAddFacilityModal(false)}
-        onAssign={handleAssignFacility}
+        onRefresh={refreshDetail}
       />
     </div>
   );

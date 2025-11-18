@@ -1,15 +1,16 @@
-// RoomCategoryList.tsx - Modern card-based layout with expandable details
+// RoomCategoryList.tsx - Complete and fixed card-based layout with expandable details
 import React, { useState } from "react";
 import type { RoomCategoryDto } from "../../../types/roomcategory.types";
-import FacilitiesSection from "../../accommodations/FacilitiesSection";
-import ImagesGallery from "../../accommodations/ImagesGallery";
+import RoomCategoryFacilitiesSection from "./RoomCategoryFacilitiesSection";
+import RoomCategoryImagesGallery from "./RoomCategoryImagesGallery";
 
 interface RoomCategoryListProps {
   roomCategories: RoomCategoryDto[];
   loading: boolean;
   onEdit: (roomCategory: RoomCategoryDto) => void;
   onDelete: (id: string) => void;
-  onOpenAssign: (type: "image" | "facility") => void;
+  onOpenAssign: (type: "image" | "facility", categoryId: string) => void;
+  onRefresh?: () => void;
 }
 
 const RoomCategoryList: React.FC<RoomCategoryListProps> = ({
@@ -18,6 +19,7 @@ const RoomCategoryList: React.FC<RoomCategoryListProps> = ({
   onEdit,
   onDelete,
   onOpenAssign,
+  onRefresh,
 }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -28,6 +30,10 @@ const RoomCategoryList: React.FC<RoomCategoryListProps> = ({
       </div>
     );
   }
+
+  const handleRefresh = () => {
+    onRefresh?.();
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-6">
@@ -55,13 +61,13 @@ const RoomCategoryList: React.FC<RoomCategoryListProps> = ({
                   Edit
                 </button>
                 <button
-                  onClick={() => onOpenAssign("image")}
+                  onClick={() => onOpenAssign("image", category.id)}
                   className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 px-3 py-1 rounded-md text-sm transition-colors bg-green-100 dark:bg-green-900/30"
                 >
                   Add Image
                 </button>
                 <button
-                  onClick={() => onOpenAssign("facility")}
+                  onClick={() => onOpenAssign("facility", category.id)}
                   className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 px-3 py-1 rounded-md text-sm transition-colors bg-indigo-100 dark:bg-indigo-900/30"
                 >
                   Add Facility
@@ -101,33 +107,43 @@ const RoomCategoryList: React.FC<RoomCategoryListProps> = ({
             {expandedId === category.id && (
               <div className="p-6 space-y-6">
                 {/* Facilities */}
-                {category.facilities.length > 0 && (
+                {category.facilities && category.facilities.length > 0 && (
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                       Facilities
                     </h4>
-                    <FacilitiesSection facilities={category.facilities} />
+                    <RoomCategoryFacilitiesSection
+                      facilities={category.facilities}
+                      onAdd={() => onOpenAssign("facility", category.id)}
+                      categoryId={category.id}
+                      onRefresh={handleRefresh}
+                    />
                   </div>
                 )}
 
                 {/* Images */}
-                {category.images.length > 0 && (
+                {category.images && category.images.length > 0 && (
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
                       Images
                     </h4>
-                    <ImagesGallery images={category.images} />
+                    <RoomCategoryImagesGallery
+                      images={category.images}
+                      onAdd={() => onOpenAssign("image", category.id)}
+                      categoryId={category.id}
+                      onRefresh={handleRefresh}
+                    />
                   </div>
                 )}
 
                 {/* Rooms Table */}
-                {category.rooms.length > 0 && (
+                {category.rooms && category.rooms.length > 0 && (
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Rooms
+                      Rooms ({category.rooms.length})
                     </h4>
                     <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-                      <table className="w-full">
+                      <table className="w-full min-w-max">
                         <thead className="bg-gray-50 dark:bg-gray-700">
                           <tr>
                             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300">

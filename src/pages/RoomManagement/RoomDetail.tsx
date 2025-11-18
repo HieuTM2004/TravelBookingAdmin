@@ -158,26 +158,6 @@ const RoomDetail: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Edit/Delete Buttons */}
-      <div className="flex space-x-3 mb-6">
-        <button
-          onClick={() => {
-            /* Open edit modal or navigate to edit */
-          }}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow-md transition-all hover:shadow-lg"
-        >
-          Edit Room
-        </button>
-        <button
-          onClick={() => {
-            /* Confirm delete */
-          }}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow-md transition-all hover:shadow-lg"
-        >
-          Delete Room
-        </button>
-      </div>
     </div>
   );
 };

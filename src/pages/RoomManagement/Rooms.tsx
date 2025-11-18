@@ -17,15 +17,22 @@ import { RoomCategoryDto } from "../../types/roomcategory.types";
 import RoomTable from "../../components/roomManage/rooms/RoomTable";
 import RoomModal from "../../components/roomManage/rooms/RoomModal";
 import { useNavigate } from "react-router-dom";
+import { getBedTypes } from "../../api/bedtypeAPI";
+import { getCancelPolicies } from "../../api/cancelpolicyAPI";
+import { BedTypeDto } from "../../types/bedtype.types";
+import { CancelPolicyDto } from "../../types/cancelpolicy.types";
 
 const Rooms: React.FC = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState<RoomSummary[]>([]);
   const [categories, setCategories] = useState<RoomCategoryDto[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(""); // Filter by category
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [bedTypes, setBedTypes] = useState<BedTypeDto[]>([]);
+  const [cancelPolicies, setCancelPolicies] = useState<CancelPolicyDto[]>([]);
   const [formData, setFormData] = useState<RoomCreateDto>({
     name: "",
     breakfast: true,
@@ -35,12 +42,32 @@ const Rooms: React.FC = () => {
     categoryId: "",
     available: true,
     rating: 0,
+    price: 0,
   });
   const [searchTerm, setSearchTerm] = useState(""); // Search by name
 
   // Fetch categories for dropdown
   useEffect(() => {
     fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [bedData, cancelData] = await Promise.all([
+          getBedTypes(),
+          getCancelPolicies(),
+        ]);
+        console.log("Fetched bed types:", bedData);
+        console.log("Fetched cancel policies:", cancelData);
+        setBedTypes(bedData);
+        setCancelPolicies(cancelData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const fetchCategories = async () => {
@@ -106,6 +133,7 @@ const Rooms: React.FC = () => {
         categoryId: selectedCategoryId,
         available: true,
         rating: 0,
+        price: 0,
       });
     } catch (error) {
       console.error("Error saving room:", error);
@@ -126,6 +154,7 @@ const Rooms: React.FC = () => {
         categoryId: fullDetail.categoryId,
         available: fullDetail.available,
         rating: fullDetail.rating,
+        price: fullDetail.price,
       });
       setShowModal(true);
     } catch (error) {
@@ -145,7 +174,29 @@ const Rooms: React.FC = () => {
     }
   };
 
-  // Handle bulk create
+  const openCreateModal = () => {
+    if (!selectedCategoryId) {
+      alert("Please select a category first.");
+      return;
+    }
+    const selectedCategory = categories.find(
+      (cat) => cat.id === selectedCategoryId
+    );
+    setSelectedCategoryName(selectedCategory?.name || "");
+    setFormData({
+      name: "",
+      breakfast: true,
+      numberOfBeds: 1,
+      bedTypeId: "",
+      cancelPolicyId: "",
+      categoryId: selectedCategoryId, // Pre-fill with selected
+      available: true,
+      rating: 0,
+      price: 0,
+    });
+    setEditingId(null);
+    setShowModal(true);
+  };
 
   return (
     <div className="p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
@@ -154,14 +205,7 @@ const Rooms: React.FC = () => {
         <h1 className="text-2xl font-bold">Rooms</h1>
         <div className="space-x-2">
           <button
-            onClick={() => true}
-            className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded shadow-md transition-all hover:shadow-lg text-sm"
-            disabled={!selectedCategoryId}
-          >
-            Bulk Add
-          </button>
-          <button
-            onClick={() => setShowModal(true)}
+            onClick={openCreateModal}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow-md transition-all hover:shadow-lg text-sm"
             disabled={!selectedCategoryId}
           >
@@ -231,11 +275,15 @@ const Rooms: React.FC = () => {
             categoryId: selectedCategoryId,
             available: true,
             rating: 0,
+            price: 0,
           });
         }}
         onSubmit={handleSubmit}
         onFormDataChange={setFormData}
         categories={categories}
+        bedTypes={bedTypes}
+        cancelPolicies={cancelPolicies}
+        selectedCategoryName={selectedCategoryName}
       />
     </div>
   );

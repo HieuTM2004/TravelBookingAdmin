@@ -1,7 +1,6 @@
 // RoomTable.tsx - Added View button in actions
 import React from "react";
 import { RoomSummary } from "../../../types/room.types";
-import { useNavigate } from "react-router-dom"; // For navigation
 
 interface RoomTableProps {
   rooms: RoomSummary[];
@@ -18,8 +17,6 @@ const RoomTable: React.FC<RoomTableProps> = ({
   onDelete,
   onView = () => {}, // Default no-op
 }) => {
-  const navigate = useNavigate(); // If not passed, use local
-
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -33,9 +30,6 @@ const RoomTable: React.FC<RoomTableProps> = ({
       <table className="w-full">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              ID
-            </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               Name
             </th>
@@ -51,9 +45,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               Price
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              Category
-            </th>
+
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
               Bed Type
             </th>
@@ -68,9 +60,6 @@ const RoomTable: React.FC<RoomTableProps> = ({
               key={room.id}
               className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                {room.id.substring(0, 8)}...
-              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                 {room.name}
               </td>
@@ -102,9 +91,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-gray-100">
                 ${room.price.toLocaleString()}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                {room.categoryName}
-              </td>
+
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                 {room.bedTypeName || "N/A"}
               </td>
