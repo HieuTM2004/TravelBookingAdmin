@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
@@ -8,7 +8,7 @@ import User from "./pages/UserManagerment/User";
 import ContentModeration from "./pages/UserManagerment/ContentModeration";
 import Analytics from "./pages/Analytics";
 import PaymentAndLogs from "./pages/PaymentAndLogs";
-import { AuthProvider } from "./components/auth/AuthContext";
+import { AuthProvider, useAuth } from "./components/auth/AuthContext";
 import Accommodations from "./pages/AccommodationManagement/Accommodations";
 import AccommodationDetail from "./pages/AccommodationManagement/AccommodationDetail";
 import AccomTypes from "./pages/AccommodationManagement/AccomTypes";
@@ -22,6 +22,18 @@ import CancelPolicies from "./pages/CancelPolicies/CancelPolicies";
 import PaymentMethods from "./pages/Payment/PaymentMethods";
 import PaymentRecords from "./pages/Payment/PaymentRecords";
 import Reviews from "./pages/Reviews/Reviews";
+import SignUp from "./pages/AuthPages/SignUp";
+import { JSX } from "react";
+
+const ProtectedAppLayout: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <AppLayout /> : <Navigate to="/signin" replace />;
+};
+
+const AuthRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <Navigate to="/" replace /> : children;
+};
 
 export default function App() {
   return (
@@ -29,7 +41,7 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          <Route element={<AppLayout />}>
+          <Route element={<ProtectedAppLayout />}>
             <Route index path="/" element={<Home />} />
 
             <Route path="/accommodations" element={<Accommodations />} />
@@ -63,8 +75,30 @@ export default function App() {
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/payment-and-logs" element={<PaymentAndLogs />} />
           </Route>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/signin"
+            element={
+              <AuthRoute>
+                <SignIn />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <AuthRoute>
+                <SignUp />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <AuthRoute>
+                <ResetPassword />
+              </AuthRoute>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>

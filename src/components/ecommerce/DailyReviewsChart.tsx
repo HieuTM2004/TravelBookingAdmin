@@ -74,7 +74,7 @@ export default function DailyReviewsChart() {
     },
   });
 
-  const [series, setSeries] = useState([
+  const [series, setSeries] = useState<{ name: string; data: number[] }[]>([
     {
       name: "Total Reviews",
       data: [],
@@ -224,7 +224,7 @@ export default function DailyReviewsChart() {
         setSeries([{ name: "Total Reviews", data: [] }]);
       }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
+      // const errorMessage = err instanceof Error ? err.message : String(err);
       console.error("Error fetching review data:", err);
       setError("Failed to fetch review data. Please try again.");
       setSeries([{ name: "Total Reviews", data: [] }]);

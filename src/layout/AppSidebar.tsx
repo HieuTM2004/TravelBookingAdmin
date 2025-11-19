@@ -291,22 +291,22 @@ const AppSidebar: React.FC = () => {
             <>
               <img
                 className="dark:hidden"
-                src="/images/logo/traveloka-logo-name.png" // Replace with actual logo
+                src="../.././public/images/logo/logo-traveloka.png" // Replace with actual logo
                 alt="Logo"
-                width={150}
-                height={40}
+                width={70}
+                height={50}
               />
               <img
                 className="hidden dark:block"
-                src="/images/logo/traveloka-logo-name.png" // Replace with actual logo
+                src="../.././public/images/logo/logo-traveloka.png" // Replace with actual logo
                 alt="Logo"
-                width={150}
-                height={40}
+                width={70}
+                height={50}
               />
             </>
           ) : (
             <img
-              src="/images/logo/traveloka-logo-icon.svg" // Replace with actual icon
+              src="../.././public/images/logo/logo-traveloka.png" // Replace with actual icon
               alt="Logo"
               width={32}
               height={32}

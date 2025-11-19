@@ -1,7 +1,13 @@
 import axios from "axios";
 import apiClient from "./apiClient";
+
 interface LoginDto {
-  email: string;
+  userNameOrEmail: string;
+  password: string;
+}
+
+interface RegisterAdminDto {
+  userName: string;
   password: string;
 }
 
@@ -10,12 +16,12 @@ interface RefreshRequestDto {
   refreshToken: string;
 }
 
-interface AuthDto {
-  id: string;
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
+interface AuthResponseDto {
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+  userName: string;
+  email: string;
 }
 
 interface ChangePasswordDto {
@@ -25,7 +31,21 @@ interface ChangePasswordDto {
   confirmPassword: string;
 }
 
-export const login = async (loginDto: LoginDto): Promise<AuthDto> => {
+export const registerAdmin = async (
+  registerDto: RegisterAdminDto
+): Promise<AuthResponseDto> => {
+  try {
+    const response = await apiClient.post("/Auth/admin-register", registerDto);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data || "Failed to register admin");
+    }
+    throw new Error("Failed to register admin");
+  }
+};
+
+export const login = async (loginDto: LoginDto): Promise<AuthResponseDto> => {
   try {
     const response = await apiClient.post("/Auth/login", loginDto);
     return response.data;
@@ -37,18 +57,12 @@ export const login = async (loginDto: LoginDto): Promise<AuthDto> => {
   }
 };
 
-export const refreshTokenRequest = async (
-  refreshDto: RefreshRequestDto
-): Promise<AuthDto> => {
-  try {
-    const response = await apiClient.post("/Auth/refresh-token", refreshDto);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data || "Failed to refresh token");
-    }
-    throw new Error("Failed to refresh token");
-  }
+export const refreshTokenRequest = async (tokens: {
+  accessToken: string;
+  refreshToken: string;
+}): Promise<AuthResponseDto> => {
+  const response = await apiClient.post("/Auth/refresh", tokens);
+  return response.data;
 };
 
 export const changePassword = async (
