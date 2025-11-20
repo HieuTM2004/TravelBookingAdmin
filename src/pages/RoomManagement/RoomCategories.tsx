@@ -49,6 +49,17 @@ const RoomCategories: React.FC = () => {
     fetchAccommodations();
   }, []);
 
+  // Thêm vào state của RoomCategories
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Filtered accommodations based on search
+  const filteredAccommodations = accommodations.filter(
+    (accom) =>
+      accom.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      accom.location.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const fetchAccommodations = async () => {
     try {
       const data = await getAccommodations({ pageSize: 100 }); // Fetch all or paginate
@@ -211,18 +222,48 @@ const RoomCategories: React.FC = () => {
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Filter by Accommodation
         </label>
-        <select
-          value={selectedAccomId}
-          onChange={(e) => handleFilterChange(e.target.value)}
-          className="w-full max-w-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select Accommodation</option>
-          {accommodations.map((accom) => (
-            <option key={accom.id} value={accom.id}>
-              {accom.name} ({accom.location})
-            </option>
-          ))}
-        </select>
+
+        {/* Custom Searchable Dropdown */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search by name or location (e.g., 'Sunrise' or 'New York')"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full max-w-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-8" // pr-8 cho icon
+            onFocus={() => setShowDropdown(true)} // Mở dropdown khi focus
+          />
+          {/* Filtered Dropdown List */}
+          {showDropdown && filteredAccommodations.length > 0 && (
+            <ul className="absolute z-50 w-full max-w-md max-h-60 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md mt-1 shadow-lg">
+              {filteredAccommodations.slice(0, 10).map(
+                (
+                  accom // Limit 10 để tránh dài
+                ) => (
+                  <li key={accom.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleFilterChange(accom.id);
+                        setSearchTerm(""); // Clear search
+                        setShowDropdown(false);
+                      }}
+                      className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-600 last:border-b-0 focus:outline-none"
+                    >
+                      {accom.name} ({accom.location})
+                    </button>
+                  </li>
+                )
+              )}
+              {filteredAccommodations.length > 10 && (
+                <li className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 italic">
+                  Showing top 10 matches. Refine search for more.
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+
         {selectedAccomName && (
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">
             Selected: {selectedAccomName}
@@ -236,15 +277,8 @@ const RoomCategories: React.FC = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onOpenAssign={handleOpenAssign}
+        accommodations={accommodations}
       />
-      {/* Table */}
-      {/* <RoomCategoryTable
-        roomCategories={roomCategories}
-        loading={loading}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onOpenAssign={handleOpenAssign}
-      /> */}
 
       {/* Modals */}
       <RoomCategoryModal

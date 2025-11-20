@@ -26,49 +26,49 @@ const AccomTypeTable: React.FC<AccomTypeTableProps> = ({
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-600 shadow-md">
       <table className="w-full">
-        <thead className="bg-gray-50 dark:bg-gray-800">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+        <thead>
+          <tr className="bg-gray-50 dark:bg-gray-800">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Type
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Created At
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Modified At
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody>
           {accomTypes.map((accomType) => (
             <tr
               key={accomType.id}
               className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {accomType.type}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {new Date(accomType.createdAt).toLocaleDateString()}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {accomType.modifyAt
                   ? new Date(accomType.modifyAt).toLocaleDateString()
                   : "N/A"}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 <button
                   onClick={() => onEdit(accomType)}
-                  className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 px-2 py-1 rounded transition-colors"
+                  className="text-green-500 hover:text-green-700 mr-2"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => onDelete(accomType.id)}
-                  className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 px-2 py-1 rounded transition-colors"
+                  className="text-red-500 hover:text-red-700"
                 >
                   Delete
                 </button>

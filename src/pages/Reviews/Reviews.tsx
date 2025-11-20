@@ -30,6 +30,7 @@ const Reviews: React.FC = () => {
     review: "",
   });
   const [searchTerm, setSearchTerm] = useState(""); // Search by review/user
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Fetch accommodations for dropdown
   useEffect(() => {
@@ -44,6 +45,13 @@ const Reviews: React.FC = () => {
       console.error("Error fetching accommodations:", error);
     }
   };
+
+  const filteredAccommodations = accommodations.filter(
+    (accom) =>
+      accom.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (accom.location &&
+        accom.location.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   // Fetch reviews based on selected accom and search
   useEffect(() => {
@@ -123,6 +131,12 @@ const Reviews: React.FC = () => {
     }
   };
 
+  const handleFilterChange = (accomId: string) => {
+    setSelectedAccomId(accomId);
+    setSearchTerm(""); // Clear search
+    setShowDropdown(false);
+  };
+
   return (
     <div className="p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
       {/* Header */}
@@ -151,36 +165,74 @@ const Reviews: React.FC = () => {
       </div>
 
       {/* Filter & Search */}
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-inner">
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Search Reviews
-          </label>
+      <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-inner">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Filter by Accommodation
+        </label>
+        <div className="relative max-w-md">
           <input
             type="text"
-            placeholder="Search by review text or user name..."
+            placeholder="Search by name or location (e.g., 'Sunrise' or 'New York')"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onFocus={() => setShowDropdown(true)}
+            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-8"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Filter by Accommodation
-          </label>
-          <select
-            value={selectedAccomId}
-            onChange={(e) => setSelectedAccomId(e.target.value)}
-            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <svg
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <option value="">All Accommodations</option>
-            {accommodations.map((accom) => (
-              <option key={accom.id} value={accom.id}>
-                {accom.name}
-              </option>
-            ))}
-          </select>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+
+          {/* Filtered Dropdown List */}
+          {showDropdown && filteredAccommodations.length > 0 && (
+            <ul className="absolute z-50 w-full max-h-60 overflow-y-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md mt-1 shadow-lg">
+              {filteredAccommodations.slice(0, 10).map((accom) => (
+                <li key={accom.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleFilterChange(accom.id)}
+                    className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-600 last:border-b-0 focus:outline-none"
+                  >
+                    {accom.name} ({accom.location || "N/A"})
+                  </button>
+                </li>
+              ))}
+              {filteredAccommodations.length > 10 && (
+                <li className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 italic">
+                  Showing top 10 matches. Refine search for more.
+                </li>
+              )}
+            </ul>
+          )}
         </div>
+
+        {selectedAccomId && (
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 italic">
+            Filtered by:{" "}
+            {accommodations.find((a) => a.id === selectedAccomId)?.name ||
+              selectedAccomId}{" "}
+            ({reviews.length} reviews)
+          </p>
+        )}
+        <button
+          onClick={() => {
+            setSelectedAccomId("");
+            setSearchTerm("");
+            setShowDropdown(false);
+          }}
+          className="mt-2 text-xs text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
+        >
+          Clear Filter
+        </button>
       </div>
 
       <ReviewTable

@@ -1,5 +1,5 @@
 // ReviewModal.tsx - Modal with rating stars/select, textarea for review, accom dropdown
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { ReviewCreateDto } from "../../types/reviews.types";
 import type { AccommodationSummary } from "../../types/accommodation.types";
 
@@ -23,6 +23,10 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
   onFormDataChange,
 }) => {
   const [tempRating, setTempRating] = useState(formData.rating);
+
+  useEffect(() => {
+    setTempRating(formData.rating);
+  }, [formData.rating]);
 
   if (!show) return null;
 

@@ -1,5 +1,5 @@
 // RoomModal.tsx - Updated for exact fields (numberOfBeds, cancelPolicyId, etc.)
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RoomCreateDto } from "../../../types/room.types";
 import { RoomCategoryDto } from "../../../types/roomcategory.types";
 import { BedTypeDto } from "../../../types/bedtype.types";
@@ -31,6 +31,10 @@ const RoomModal: React.FC<RoomModalProps> = ({
 }) => {
   const [tempRating, setTempRating] = useState(formData.rating);
 
+  useEffect(() => {
+    setTempRating(formData.rating);
+  }, [formData.rating]);
+  console.log("rating" + formData.rating);
   if (!show) return null;
 
   const handleChange = (
@@ -127,7 +131,7 @@ const RoomModal: React.FC<RoomModalProps> = ({
                 className="w-full"
               />
               <span className="text-sm text-gray-600 dark:text-gray-400 block mt-1">
-                {tempRating}
+                {tempRating.toFixed(1)}
               </span>
             </div>
           </div>

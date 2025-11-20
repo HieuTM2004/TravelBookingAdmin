@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import type { RoomCategoryDto } from "../../../types/roomcategory.types";
 import RoomCategoryFacilitiesSection from "./RoomCategoryFacilitiesSection";
 import RoomCategoryImagesGallery from "./RoomCategoryImagesGallery";
+import { AccommodationSummary } from "../../../types/accommodation.types";
 
 interface RoomCategoryListProps {
   roomCategories: RoomCategoryDto[];
@@ -11,6 +12,7 @@ interface RoomCategoryListProps {
   onDelete: (id: string) => void;
   onOpenAssign: (type: "image" | "facility", categoryId: string) => void;
   onRefresh?: () => void;
+  accommodations?: AccommodationSummary[];
 }
 
 const RoomCategoryList: React.FC<RoomCategoryListProps> = ({
@@ -81,8 +83,7 @@ const RoomCategoryList: React.FC<RoomCategoryListProps> = ({
               </div>
             </div>
             <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 space-x-4">
-              <span>ID: {category.id.substring(0, 8)}...</span>
-              <span>Accom ID: {category.accomId.substring(0, 8)}...</span>
+              <span>Category: {category.name}</span>
               <span>
                 Created: {new Date(category.createdAt).toLocaleDateString()}
               </span>

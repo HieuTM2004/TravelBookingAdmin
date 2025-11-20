@@ -38,10 +38,10 @@ const AccommodationDetail: React.FC = () => {
   const [showAddImageModal, setShowAddImageModal] = useState(false);
   const [showAddFacilityModal, setShowAddFacilityModal] = useState(false);
 
-  const [showAddImageToCategory, setShowAddImageToCategory] = useState(false);
-  const [showAddFacilityToCategory, setShowAddFacilityToCategory] =
-    useState(false);
-  const [currentCategoryId, setCurrentCategoryId] = useState<string>("");
+  // const [showAddImageToCategory, setShowAddImageToCategory] = useState(false);
+  // const [showAddFacilityToCategory, setShowAddFacilityToCategory] =
+  //   useState(false);
+  // const [currentCategoryId, setCurrentCategoryId] = useState<string>("");
   useEffect(() => {
     if (id) {
       fetchDetail(id);
@@ -145,12 +145,12 @@ const AccommodationDetail: React.FC = () => {
     );
   }
 
-  const onOpenAssign = (type: "image" | "facility", categoryId: string) => {
-    setCurrentCategoryId(categoryId);
+  const onOpenAssign = (type: "image" | "facility") => {
+    // setCurrentCategoryId(categoryId);
     if (type === "image") {
-      setShowAddImageToCategory(true);
+      // setShowAddImageToCategory(true);
     } else {
-      setShowAddFacilityToCategory(true);
+      // setShowAddFacilityToCategory(true);
     }
   };
 

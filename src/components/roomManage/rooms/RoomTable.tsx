@@ -30,40 +30,40 @@ const RoomTable: React.FC<RoomTableProps> = ({
       <table className="w-full">
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Name
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Available
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Breakfast
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Rating
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Price
             </th>
 
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Bed Type
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody>
           {rooms.map((room) => (
             <tr
               key={room.id}
-              className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="hover:bg-gray-50 dark:hover:bg-gray-700"
             >
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {room.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 <span
                   className={`px-2 py-1 rounded-full text-xs font-medium ${
                     room.available
@@ -74,7 +74,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
                   {room.available ? "Yes" : "No"}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 <span
                   className={`px-2 py-1 rounded-full text-xs font-medium ${
                     room.breakfast
@@ -85,17 +85,17 @@ const RoomTable: React.FC<RoomTableProps> = ({
                   {room.breakfast ? "Yes" : "No"}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600 dark:text-yellow-400">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {"★".repeat(Math.floor(room.rating))} {room.rating}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-gray-100">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 ${room.price.toLocaleString()}
               </td>
 
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {room.bedTypeName || "N/A"}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 <button
                   onClick={() => onView(room.id)} // Use onView prop
                   className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 px-3 py-1 rounded-md text-xs transition-colors bg-indigo-100 dark:bg-indigo-900/30"

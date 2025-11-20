@@ -24,36 +24,36 @@ const PaymentMethodTable: React.FC<PaymentMethodTableProps> = ({
 
   return (
     <div className="overflow-hidden rounded-lg border border-gray-300 dark:border-gray-600 shadow-md">
-      <table className="w-full">
-        <thead className="bg-gray-50 dark:bg-gray-800">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+      <table className="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <thead>
+          <tr className="bg-gray-100 dark:bg-gray-800">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               ID
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Name
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody>
           {paymentMethods.map((method) => (
             <tr
               key={method.id}
-              className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="hover:bg-gray-50 dark:hover:bg-gray-700"
             >
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 <div className="flex items-center">
                   <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
                   {method.id.substring(0, 8)}...
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {method.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 space-x-2">
                 <button
                   onClick={() => onEdit(method)}
                   className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 px-3 py-1 rounded-md text-xs transition-colors bg-blue-100 dark:bg-blue-900/30"

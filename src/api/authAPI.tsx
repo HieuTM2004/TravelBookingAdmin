@@ -11,11 +11,6 @@ interface RegisterAdminDto {
   password: string;
 }
 
-interface RefreshRequestDto {
-  accessToken: string;
-  refreshToken: string;
-}
-
 interface AuthResponseDto {
   accessToken: string;
   refreshToken: string;

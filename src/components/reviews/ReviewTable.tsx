@@ -43,62 +43,62 @@ const ReviewTable: React.FC<ReviewTableProps> = ({
 
   return (
     <div className="overflow-hidden rounded-lg border border-gray-300 dark:border-gray-600 shadow-md">
-      <table className="w-full">
-        <thead className="bg-gray-50 dark:bg-gray-800">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+      <table className="w-full border-collapse border border-gray-300 dark:border-gray-600">
+        <thead>
+          <tr className="bg-gray-100 dark:bg-gray-800">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               ID
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Rating
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Review
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               User
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Accommodation ID
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Date
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody>
           {reviews.map((review) => (
             <tr
               key={review.id}
-              className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="hover:bg-gray-50 dark:hover:bg-gray-700"
             >
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {review.id.substring(0, 8)}...
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {renderStars(review.rating)}
               </td>
-              <td className="px-6 py-4 max-w-xs">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 <p
-                  className="text-sm text-gray-900 dark:text-gray-100 truncate"
+                  className=" border-gray-300 dark:border-gray-600 px-4 py-2"
                   title={review.review}
                 >
                   {review.review}
                 </p>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {review.userName}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {review.accomId.substring(0, 8)}...
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {new Date(review.createdAt).toLocaleDateString()}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 space-x-2">
                 <button
                   onClick={() => onEdit(review)}
                   className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 px-3 py-1 rounded-md text-xs transition-colors bg-blue-100 dark:bg-blue-900/30"
