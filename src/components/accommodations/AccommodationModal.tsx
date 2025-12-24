@@ -103,9 +103,21 @@ const AccommodationModal: React.FC<AccommodationModalProps> = ({
             </label>
             <input
               type="tel"
-              placeholder="e.g., +1-234-567-8900"
+              placeholder="e.g., 09123456789"
               value={formData.phone}
-              onChange={(e) => handleInputChange("phone", e.target.value)}
+              onChange={(e) => {
+                let value = e.target.value;
+
+                // CHỈ cho phép số, +, -, khoảng trắng
+                value = value.replace(/[^0-9+\-\s]/g, "");
+
+                // LẤY RIÊNG CÁC SỐ ĐỂ GIỚI HẠN 11
+                const digitsOnly = value.replace(/\D/g, ""); // chỉ giữ số
+
+                if (digitsOnly.length > 11) return; // nếu vượt 11 số thì không update nữa
+
+                handleInputChange("phone", value);
+              }}
               className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             />

@@ -8,12 +8,7 @@ interface ReviewTableProps {
   onDelete: (id: string) => void;
 }
 
-const ReviewTable: React.FC<ReviewTableProps> = ({
-  reviews,
-  loading,
-  onEdit,
-  onDelete,
-}) => {
+const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, loading }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -64,9 +59,6 @@ const ReviewTable: React.FC<ReviewTableProps> = ({
             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Date
             </th>
-            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
-              Actions
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -97,20 +89,6 @@ const ReviewTable: React.FC<ReviewTableProps> = ({
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {new Date(review.createdAt).toLocaleDateString()}
-              </td>
-              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 space-x-2">
-                <button
-                  onClick={() => onEdit(review)}
-                  className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 px-3 py-1 rounded-md text-xs transition-colors bg-blue-100 dark:bg-blue-900/30"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => onDelete(review.id)}
-                  className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 px-3 py-1 rounded-md text-xs transition-colors bg-red-100 dark:bg-red-900/30"
-                >
-                  Delete
-                </button>
               </td>
             </tr>
           ))}

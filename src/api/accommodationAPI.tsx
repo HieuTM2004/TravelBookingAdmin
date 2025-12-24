@@ -103,7 +103,11 @@ export const assignImage = async (
   accomId: string,
   imageId: string
 ): Promise<void> => {
-  await apiClient.post(`/Accommodation/${accomId}/images/${imageId}`);
+  await apiClient.post(`/Accommodation/${accomId}/images`, `"${imageId}"`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 // DELETE /api/Accommodation/{accomId}/images/{imageId}
@@ -119,7 +123,15 @@ export const assignFacility = async (
   accomId: string,
   facilityId: string
 ): Promise<void> => {
-  await apiClient.post(`/Accommodation/${accomId}/facilities/${facilityId}`);
+  await apiClient.post(
+    `/Accommodation/${accomId}/facilites`,
+    `"${facilityId}"`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 };
 
 // DELETE /api/Accommodation/{accomId}/facilities/{facilityId}

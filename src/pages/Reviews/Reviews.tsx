@@ -2,19 +2,12 @@ import React, { useState, useEffect } from "react";
 import { getAccommodations } from "../../api/accommodationAPI"; // For accom dropdown
 import {
   getReviewsByAccomId,
-  createReview,
-  updateReview,
   deleteReview,
   getReviewById,
 } from "../../api/reviewsAPI";
-import type {
-  ReviewCreateDto,
-  ReviewUpdateDto,
-  ReviewDto,
-} from "../../types/reviews.types";
+import type { ReviewDto } from "../../types/reviews.types";
 import { AccommodationSummary } from "../../types/accommodation.types";
 import ReviewTable from "../../components/reviews/ReviewTable";
-import ReviewModal from "../../components/reviews/ReviewModal";
 
 const Reviews: React.FC = () => {
   const [reviews, setReviews] = useState<ReviewDto[]>([]);
@@ -23,12 +16,6 @@ const Reviews: React.FC = () => {
   );
   const [selectedAccomId, setSelectedAccomId] = useState<string>(""); // Filter by accom
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<ReviewCreateDto>({
-    rating: 5,
-    review: "",
-  });
   const [searchTerm, setSearchTerm] = useState(""); // Search by review/user
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -86,40 +73,14 @@ const Reviews: React.FC = () => {
     }
   };
 
-  // Handle create/update
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      if (editingId) {
-        await updateReview(editingId, formData as ReviewUpdateDto);
-      } else {
-        await createReview(selectedAccomId, formData);
-      }
-      fetchReviews(selectedAccomId); // Refresh list
-      setShowModal(false);
-      setEditingId(null);
-      setFormData({ rating: 5, review: "" });
-    } catch (error) {
-      console.error("Error saving review:", error);
-    }
-  };
-
-  // Handle edit (fetch full detail)
   const handleEdit = async (review: ReviewDto) => {
     try {
-      setEditingId(review.id);
-      const fullDetail = await getReviewById(review.id);
-      setFormData({
-        rating: fullDetail.rating,
-        review: fullDetail.review,
-      });
-      setShowModal(true);
+      await getReviewById(review.id);
     } catch (error) {
       console.error("Error fetching review details:", error);
     }
   };
 
-  // Handle delete
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this review?")) {
       try {
@@ -142,26 +103,6 @@ const Reviews: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Reviews</h1>
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md transition-all hover:shadow-lg flex items-center space-x-2"
-          disabled={!selectedAccomId}
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          <span>Add Review</span>
-        </button>
       </div>
 
       {/* Filter & Search */}
@@ -240,21 +181,6 @@ const Reviews: React.FC = () => {
         loading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}
-      />
-
-      <ReviewModal
-        show={showModal}
-        editingId={editingId}
-        formData={formData}
-        onClose={() => {
-          setShowModal(false);
-          setEditingId(null);
-          setFormData({ rating: 5, review: "" });
-        }}
-        onSubmit={handleSubmit}
-        onFormDataChange={setFormData}
-        selectedAccomId={selectedAccomId}
-        accommodations={accommodations}
       />
     </div>
   );

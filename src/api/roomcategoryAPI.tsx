@@ -50,7 +50,15 @@ export const assignImageToRoomCategory = async (
   roomCategoryId: string,
   imageId: string
 ): Promise<void> => {
-  await apiClient.post(`/RoomCategory/${roomCategoryId}/images/${imageId}`);
+  await apiClient.post(
+    `/RoomCategory/${roomCategoryId}/images`,
+    `"${imageId}"`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 };
 
 // DELETE /api/RoomCategory/{roomCategoryId}/images/{imageId}
@@ -67,7 +75,13 @@ export const assignFacilityToRoomCategory = async (
   facilityId: string
 ): Promise<void> => {
   await apiClient.post(
-    `/RoomCategory/${roomCategoryId}/facilities/${facilityId}`
+    `/RoomCategory/${roomCategoryId}/facilities`,
+    `"${facilityId}"`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
   );
 };
 
