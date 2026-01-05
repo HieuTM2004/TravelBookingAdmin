@@ -89,7 +89,7 @@ const RoomTable: React.FC<RoomTableProps> = ({
                 {"★".repeat(Math.floor(room.rating))} {room.rating}
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
-                ${room.price.toLocaleString()}
+                {(room.price ?? 0).toLocaleString("vi-VN")} VNĐ
               </td>
 
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">

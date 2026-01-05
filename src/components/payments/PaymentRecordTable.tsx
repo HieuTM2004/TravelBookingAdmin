@@ -64,7 +64,7 @@ const PaymentRecordTable: React.FC<PaymentRecordTableProps> = ({
                 {record.paymentMethodName}
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
-                ${record.price.toLocaleString()}
+                {(record.price ?? 0).toLocaleString("vi-VN")} VNĐ
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-xs">
                 <Badge color={record.status === 1 ? "success" : "warning"}>

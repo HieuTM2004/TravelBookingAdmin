@@ -1,9 +1,5 @@
 import apiClient from "./apiClient";
-import type {
-  ImageDto,
-  ImageCreateDto,
-  ImageUpdateDto,
-} from "../types/image.types";
+import type { ImageDto } from "../types/image.types";
 
 // GET /api/Image - List all
 export const getImages = async (): Promise<ImageDto[]> => {
@@ -17,18 +13,26 @@ export const getImageById = async (id: string): Promise<ImageDto> => {
   return response.data;
 };
 
-// POST /api/Image
-export const createImage = async (data: ImageCreateDto): Promise<string> => {
-  const response = await apiClient.post("/Image", data);
-  return response.data; // Returns GUID
+export const createImage = async (file: File, alt: string) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("alt", alt);
+  const response = await apiClient.post("/Image", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  return response.data;
 };
 
 // PUT /api/Image/{id}
-export const updateImage = async (
-  id: string,
-  data: ImageUpdateDto
-): Promise<void> => {
-  await apiClient.put(`/Image/${id}`, data);
+export const updateImage = async (id: string, file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await apiClient.put(`/Image/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
 };
 
 // DELETE /api/Image/{id}

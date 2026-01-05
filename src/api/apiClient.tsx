@@ -1,8 +1,8 @@
 import axios from "axios";
+const API_BASE_URL = "https://unhieratical-cindy-heatless.ngrok-free.dev/api";
 
-// Tạo instance chính
 const apiClient = axios.create({
-  baseURL: "/api",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -26,22 +26,24 @@ const isPublicEndpoint = (url: string | undefined) => {
 // --- REQUEST INTERCEPTOR ---
 apiClient.interceptors.request.use(
   (config) => {
-    console.log("🚀 Đang chuẩn bị gửi request tới:", config.url);
-    console.log(
-      "🔑 Token trong LocalStorage:",
-      localStorage.getItem("accessToken")
-    );
-    if (config.method?.toUpperCase() === "GET") {
-      return config;
-    }
-    if (isPublicEndpoint(config.url)) {
-      return config;
+    // 1. Vượt rào ngrok (BẮT BUỘC)
+    config.headers["ngrok-skip-browser-warning"] = "69420";
+
+    // 2. Làm sạch params: Loại bỏ các field bị undefined hoặc rỗng
+    if (config.params) {
+      Object.keys(config.params).forEach((key) => {
+        if (config.params[key] === undefined || config.params[key] === "") {
+          delete config.params[key];
+        }
+      });
     }
 
+    // 3. Đính kèm Token (Bỏ cái check GET đi, cứ có token thì đính vào, không sao cả)
     const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
+    if (accessToken && !isPublicEndpoint(config.url)) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -101,7 +103,7 @@ apiClient.interceptors.response.use(
         // Sử dụng một instance axios MỚI HOÀN TOÀN để gọi refresh
         // Không dùng apiClient để gọi, cũng không import từ authAPI
         const response = await axios.post(
-          "/api/Auth/refresh", // Lưu ý: Dùng full path hoặc setup baseURL nếu cần
+          `${API_BASE_URL}/Auth/refresh`, // Lưu ý: Dùng full path hoặc setup baseURL nếu cần
           { accessToken, refreshToken },
           { headers: { "Content-Type": "application/json" } }
         );

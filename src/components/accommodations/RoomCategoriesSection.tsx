@@ -91,7 +91,7 @@ const RoomCategoriesSection: React.FC<Props> = ({
                           </td>
                           <td className="border px-2 py-1">{room.rating}</td>
                           <td className="border px-2 py-1">
-                            ${room.price.toLocaleString()}
+                            {(room.price ?? 0).toLocaleString("vi-VN")} VNĐ
                           </td>
                         </tr>
                       ))}

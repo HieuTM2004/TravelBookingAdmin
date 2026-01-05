@@ -191,7 +191,7 @@ const RoomCategoryList: React.FC<RoomCategoryListProps> = ({
                                 {room.rating}
                               </td>
                               <td className="px-4 py-2 text-sm font-medium text-right text-gray-900 dark:text-gray-100">
-                                ${room.price.toLocaleString()}
+                                {(room.price ?? 0).toLocaleString("vi-VN")} VNĐ
                               </td>
                             </tr>
                           ))}

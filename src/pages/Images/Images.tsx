@@ -1,17 +1,11 @@
-// Images.tsx - Main page with gallery layout (thumbnails, read-only dates)
 import React, { useState, useEffect } from "react";
 import {
   getImages,
   createImage,
   updateImage,
   deleteImage,
-  getImageById,
 } from "../../api/imageAPI";
-import type {
-  ImageCreateDto,
-  ImageUpdateDto,
-  ImageDto,
-} from "../../types/image.types";
+import type { ImageDto } from "../../types/image.types";
 import ImageGallery from "../../components/image/ImageGallery";
 import ImageModal from "../../components/image/ImageModal";
 
@@ -20,12 +14,8 @@ const Images: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<ImageCreateDto>({
-    url: "",
-    alt: "",
-  });
 
-  // Fetch all images
+  // Lấy danh sách ảnh khi component mount
   useEffect(() => {
     fetchImages();
   }, []);
@@ -36,100 +26,110 @@ const Images: React.FC = () => {
       const data = await getImages();
       setImages(data);
     } catch (error) {
-      console.error("Error fetching images:", error);
+      console.error("Lỗi khi tải danh sách ảnh:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle create/update
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  /**
+   * Cập nhật: Hàm handleSubmit giờ nhận 2 tham số
+   * @param file - Đối tượng File binary
+   * @param alt - Chuỗi mô tả ảnh (SEO)
+   */
+  const handleSubmit = async (file: File, alt: string) => {
+    setLoading(true);
     try {
       if (editingId) {
-        await updateImage(editingId, formData as ImageUpdateDto);
+        await updateImage(editingId, file, alt);
       } else {
-        await createImage(formData);
+        await createImage(file, alt);
       }
-      fetchImages(); // Refresh list
-      setShowModal(false);
-      setEditingId(null);
-      setFormData({ url: "", alt: "" });
+
+      await fetchImages(); // Refresh danh sách
+      handleCloseModal();
     } catch (error) {
-      console.error("Error saving image:", error);
+      console.error("Lỗi khi lưu ảnh:", error);
+      alert(
+        "Không thể lưu ảnh. Vui lòng kiểm tra lại định dạng hoặc thông tin nhập vào."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Handle edit (fetch full detail)
-  const handleEdit = async (image: ImageDto) => {
-    try {
-      setEditingId(image.id);
-      const fullDetail = await getImageById(image.id);
-      setFormData({
-        url: fullDetail.url,
-        alt: fullDetail.alt,
-      });
-      setShowModal(true);
-    } catch (error) {
-      console.error("Error fetching image details:", error);
-    }
+  const handleEdit = (image: ImageDto) => {
+    setEditingId(image.id);
+    setShowModal(true);
   };
 
-  // Handle delete
   const handleDelete = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this image?")) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa ảnh này không?")) {
       try {
         await deleteImage(id);
         fetchImages();
       } catch (error) {
-        console.error("Error deleting image:", error);
+        console.error("Lỗi khi xóa ảnh:", error);
       }
     }
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingId(null);
+  };
+
   return (
-    <div className="p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Images</h1>
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white transition-colors duration-300">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold">Images</h1>
+        </div>
+
         <button
           onClick={() => setShowModal(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow-md transition-all hover:shadow-lg"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md transition-all hover:shadow-lg flex items-center space-x-2"
         >
-          Add New
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          <span>Add New Image</span>
         </button>
       </div>
 
-      {/* Search/Filter */}
-      <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-inner">
-        <input
-          type="text"
-          placeholder="Search by alt text..."
-          className="w-full max-w-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onChange={(e) => {
-            // Add search logic if needed
-          }}
+      {/* Gallery Section */}
+      <div className="relative">
+        {loading && !showModal && (
+          <div className="absolute inset-0 bg-white/40 dark:bg-gray-900/40 z-10 flex items-center justify-center backdrop-blur-[1px] rounded-xl">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600"></div>
+          </div>
+        )}
+
+        <ImageGallery
+          images={images}
+          loading={loading}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       </div>
 
-      <ImageGallery
-        images={images}
-        loading={loading}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-
+      {/* Modal Section */}
       <ImageModal
         show={showModal}
         editingId={editingId}
-        formData={formData}
-        onClose={() => {
-          setShowModal(false);
-          setEditingId(null);
-          setFormData({ url: "", alt: "" });
-        }}
-        onSubmit={handleSubmit}
-        onFormDataChange={setFormData}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit} // handleSubmit ở đây sẽ được gọi với (file, alt)
       />
     </div>
   );

@@ -42,9 +42,6 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, loading }) => {
         <thead>
           <tr className="bg-gray-100 dark:bg-gray-800">
             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
-              ID
-            </th>
-            <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
               Rating
             </th>
             <th className="border border-gray-300 dark:border-gray-600 px-4 py-2 text-left">
@@ -67,9 +64,6 @@ const ReviewTable: React.FC<ReviewTableProps> = ({ reviews, loading }) => {
               key={review.id}
               className="hover:bg-gray-50 dark:hover:bg-gray-700"
             >
-              <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
-                {review.id.substring(0, 8)}...
-              </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 {renderStars(review.rating)}
               </td>

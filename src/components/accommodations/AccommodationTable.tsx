@@ -94,7 +94,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                 {accom.location}
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
-                ${accom.price.toLocaleString()}
+                {(accom.price ?? 0).toLocaleString("vi-VN")} VNĐ
               </td>
               <td className="border border-gray-300 dark:border-gray-600 px-4 py-2">
                 <button

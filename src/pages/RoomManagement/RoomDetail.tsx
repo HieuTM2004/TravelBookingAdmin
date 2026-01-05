@@ -124,7 +124,8 @@ const RoomDetail: React.FC = () => {
               <strong>Number of Beds:</strong> {detail.numberOfBeds}
             </p>
             <p>
-              <strong>Price:</strong> ${detail.price.toLocaleString()}
+              <strong>Price:</strong>{" "}
+              {(detail.price ?? 0).toLocaleString("vi-VN")} VNĐ
             </p>
             <p>
               <strong>Bed Type ID:</strong> {detail.bedTypeId}

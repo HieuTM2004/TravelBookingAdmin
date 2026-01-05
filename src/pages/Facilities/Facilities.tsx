@@ -25,6 +25,14 @@ const Facilities: React.FC = () => {
     icon: "",
   });
 
+  // Search term and derived filtered list
+  const [searchTerm, setSearchTerm] = useState("");
+  const filteredFacilities = React.useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return facilities;
+    return facilities.filter((f) => f.name?.toLowerCase().includes(q));
+  }, [facilities, searchTerm]);
+
   // Fetch all facilities
   useEffect(() => {
     fetchFacilities();
@@ -117,16 +125,15 @@ const Facilities: React.FC = () => {
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-inner">
         <input
           type="text"
-          placeholder="Search by name or icon..."
+          placeholder="Search by name..."
           className="w-full max-w-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onChange={(e) => {
-            // Add search logic if needed (filter local)
-          }}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       <FacilityTable
-        facilities={facilities}
+        facilities={filteredFacilities}
         loading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}

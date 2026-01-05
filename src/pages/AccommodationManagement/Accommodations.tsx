@@ -64,6 +64,7 @@ const Accommodations: React.FC = () => {
       const data: PagedResult<AccommodationSummary> = await getAccommodations(
         params
       );
+      console.log("getAccommodations:", data.items);
       setAccommodations(data.items);
       setTotalCount(data.total);
       setTotalPages(data.totalPages);

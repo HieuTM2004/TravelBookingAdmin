@@ -98,7 +98,7 @@ const RoomModal: React.FC<RoomModalProps> = ({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Price ($)
+                Price (VNĐ)
               </label>
               <input
                 type="number"

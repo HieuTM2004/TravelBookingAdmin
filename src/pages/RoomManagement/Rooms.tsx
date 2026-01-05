@@ -21,9 +21,21 @@ import { getBedTypes } from "../../api/bedtypeAPI";
 import { getCancelPolicies } from "../../api/cancelpolicyAPI";
 import { BedTypeDto } from "../../types/bedtype.types";
 import { CancelPolicyDto } from "../../types/cancelpolicy.types";
+import { getAccommodations } from "../../api/accommodationAPI";
+
+interface AccommodationSummary {
+  id: string;
+  name: string;
+  location: string;
+}
 
 const Rooms: React.FC = () => {
   const navigate = useNavigate();
+  const [accommodations, setAccommodations] = useState<AccommodationSummary[]>(
+    []
+  );
+  const [selectedAccomId, setSelectedAccomId] = useState<string>("");
+
   const [rooms, setRooms] = useState<RoomSummary[]>([]);
   const [categories, setCategories] = useState<RoomCategoryDto[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
@@ -46,47 +58,58 @@ const Rooms: React.FC = () => {
   });
   const [searchTerm, setSearchTerm] = useState(""); // Search by name
 
-  // Fetch categories for dropdown
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
+    const fetchInitialData = async () => {
       try {
+        setLoading(true); // Nếu bạn muốn hiện loading khi đang tải danh sách khách sạn
+
+        // Gọi hàm "xịn" bạn đã định nghĩa
+        // Truyền pageSize lớn nếu bạn có nhiều khách sạn để tránh bị thiếu trong dropdown
+        const data = await getAccommodations({ pageSize: 100 });
+
+        console.log("Fetched accommodations:", data.items);
+        setAccommodations(data.items);
+
+        // Fetch thêm bedTypes và policies như cũ
         const [bedData, cancelData] = await Promise.all([
           getBedTypes(),
           getCancelPolicies(),
         ]);
-        console.log("Fetched bed types:", bedData);
-        console.log("Fetched cancel policies:", cancelData);
         setBedTypes(bedData);
         setCancelPolicies(cancelData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Lỗi khi lấy dữ liệu ban đầu:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
+    fetchInitialData();
   }, []);
 
-  const fetchCategories = async () => {
+  useEffect(() => {
+    if (selectedAccomId) {
+      fetchCategories(selectedAccomId);
+    } else {
+      setCategories([]);
+    }
+    setSelectedCategoryId("");
+    setRooms([]);
+  }, [selectedAccomId]);
+
+  const fetchCategories = async (accomId: string) => {
     try {
-      // Fetch from a sample accom or all; adjust as needed
-      const sampleAccomId = "bbbb1111-2222-3333-4444-555566667777"; // Dynamic if needed
-      const data = await getRoomCategoriesByAccomId(sampleAccomId);
+      const data = await getRoomCategoriesByAccomId(accomId);
       setCategories(data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
 
-  // Fetch rooms based on selected category and search
+  // 3. Khi selectedCategoryId thay đổi -> Fetch Rooms (giữ nguyên logic cũ)
   useEffect(() => {
     if (selectedCategoryId) {
       fetchRooms(selectedCategoryId);
-    } else {
-      setRooms([]);
     }
   }, [selectedCategoryId, searchTerm]);
 
@@ -94,12 +117,11 @@ const Rooms: React.FC = () => {
     setLoading(true);
     try {
       const data = await getRoomsByCategoryId(categoryId);
-      let filtered = data;
-      if (searchTerm.trim()) {
-        filtered = data.filter((room) =>
-          room.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-        );
-      }
+      const filtered = searchTerm.trim()
+        ? data.filter((r) =>
+            r.name.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        : data;
       setRooms(filtered);
     } catch (error) {
       console.error("Error fetching rooms:", error);
@@ -215,29 +237,38 @@ const Rooms: React.FC = () => {
       </div>
 
       {/* Filter & Search */}
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-inner">
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Search Rooms
-          </label>
-          <input
-            type="text"
-            placeholder="Search by room name..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-inner">
+        {/* Dropdown 1: Chọn Accommodation */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Filter by Category
+          <label className="block text-sm font-medium mb-2">
+            1. Select Accommodation
+          </label>
+          <select
+            value={selectedAccomId}
+            onChange={(e) => setSelectedAccomId(e.target.value)}
+            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-2 rounded-md"
+          >
+            <option value="">Choose Accommodation</option>
+            {accommodations.map((acc) => (
+              <option key={acc.id} value={acc.id}>
+                {acc.name} ({acc.location})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Dropdown 2: Chọn Category (chỉ hiện khi đã chọn Accom) */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            2. Filter by Category
           </label>
           <select
             value={selectedCategoryId}
             onChange={(e) => setSelectedCategoryId(e.target.value)}
-            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={!selectedAccomId}
+            className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 p-2 rounded-md disabled:bg-gray-200"
           >
-            <option value="">Select Category</option>
+            <option value=""> Select Category </option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}

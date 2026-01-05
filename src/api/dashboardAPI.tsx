@@ -36,3 +36,54 @@ export const getAccomCount = async (): Promise<{ accomNumber: number }> => {
   const response = await apiClient.get("/Dashboard/accommodations/count");
   return response.data;
 };
+
+export interface ReviewPoint {
+  period: string;
+  count: number;
+}
+
+export interface AccomReviewAnalytics {
+  accomId: string;
+  accomName: string;
+  points: ReviewPoint[];
+  total: number;
+}
+
+export interface ReviewQueryParams {
+  year?: number;
+  month?: number;
+  from?: string;
+  to?: string;
+  granularity?: number; // 0, 1, 2
+}
+
+// api/dashboardAPI.ts
+export const getReviewAnalytics = async (params: ReviewQueryParams) => {
+  const response = await apiClient.get("/Dashboard/reviews", { params });
+  return response.data;
+};
+
+export interface ReviewQueryParams {
+  year?: number;
+  month?: number;
+  from?: string;
+  to?: string;
+  granularity?: number; // 0: Daily, 1: Monthly, 2: Yearly
+}
+
+export interface IncomePoint {
+  period: string;
+  amount: number; // Tiền ở đây
+}
+
+export interface AccomIncomeAnalytics {
+  accomId: string;
+  accomName: string;
+  points: IncomePoint[];
+  total: number;
+}
+
+export const getIncomeAnalytics = async (params: ReviewQueryParams) => {
+  const response = await apiClient.get("/Dashboard/income", { params });
+  return response.data;
+};

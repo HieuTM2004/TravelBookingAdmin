@@ -19,5 +19,8 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '/api'),  // Giữ nguyên path /api
       },
     },
+    allowedHosts: [
+      'thaddeus-hyperarchaeological-topologically.ngrok-free.dev'
+    ]
   },
 });
